@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "UNLaM - Deteccion tentativa suicidio y violencia",
+  "version": "1.0",
+  "description": "IA Aplica 1c2024",
+  "icons": {
+    "128": "logo_unlam_verde.png"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab"]
+}
