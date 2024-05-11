@@ -4,19 +4,27 @@
     <title>Mi extensión</title>
     <meta charset="UTF-8" />
     <style>
-      body {
-        width: 300px;
-        height: 200px;
+      .container {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        font-size: 24px;
+        width: 250px;
+        height: 110px;
+      }
+
+      label,
+      input,
+      button,
+      div {
+        margin: 5px;
       }
     </style>
   </head>
-  <body>
-    <button id="cambiar-mensaje">Cambiar mensaje</button>
-
+  <body class="container">
+    <label>Ingrese texto a analizar</label>
+    <input id="texto-input" type="text" />
+    <button id="cambiar-mensaje">Consultar</button>
     <script src="popup.js"></script>
+    <div></div>
   </body>
 </html>
