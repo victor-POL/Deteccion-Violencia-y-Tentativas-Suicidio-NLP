@@ -1,8 +1,8 @@
-const boton = document.getElementById("cambiar-mensaje");
-api_url = "https://73e7-35-230-169-58.ngrok-free.app/";
+const botonObtenerPrediccion = document.getElementById("boton-obtener-prediccion");
+api_url = "https://bf67-2802-8010-8f23-501-b91f-238b-b638-14a5.ngrok-free.app/";
 
-boton.addEventListener("click", () => {
-  const mensaje = document.querySelector("div");
+botonObtenerPrediccion.addEventListener("click", () => {
+  const mensaje = document.querySelector("#resultado-prediccion");
   const inputText = encodeURIComponent(
     document.getElementById("texto-input").value
   );
