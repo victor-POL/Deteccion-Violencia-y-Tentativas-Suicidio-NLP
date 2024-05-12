@@ -1,4 +1,6 @@
-const api_url = "https://05e4-2802-8010-8f23-501-b91f-238b-b638-14a5.ngrok-free.app/";
+const api_url = "http://127.0.0.1:5000/";
+const ruta_text_prediction = "text_prediction"
+const ruta_url_prediction = "url_predition"
 
 const botonObtenerPrediccion = document.getElementById(
   "boton-obtener-prediccion"
@@ -13,7 +15,7 @@ botonObtenerPrediccion.addEventListener("click", () => {
     document.getElementById("texto-input").value
   );
 
-  fetch(api_url + "output?text=" + inputText, {
+  fetch(api_url + ruta_text_prediction + "?text=" + inputText, {
     headers: {
       "ngrok-skip-browser-warning": "true",
     },
@@ -22,13 +24,13 @@ botonObtenerPrediccion.addEventListener("click", () => {
       if (response.ok) {
         return response.json();
       }
-      throw new Error();
+      throw new Error("Error al enviar el texto a la API");
     })
     .then((data) => {
       divResultadoPrediccion.textContent = data.prediction ? "Suicida" : "No suicida";
     })
     .catch((error) => {
-      divResultadoPrediccion.textContent = "Error al consultar el input ingresado";
+      divResultadoPrediccion.textContent = error.message;
     });
 });
 
@@ -38,7 +40,7 @@ botonObtenerPaginaActual.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const url = tabs[0].url;
     if (/https:\/\/www\.reddit\.com\/r\/SuicideWatch\/comments\//.test(url)) {
-      fetch(api_url + "analizar_url", {
+      fetch(api_url + ruta_url_prediction, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,8 +54,8 @@ botonObtenerPaginaActual.addEventListener("click", () => {
           throw new Error("Error al enviar la URL a la API");
         })
         .then((data) => {
-          if(data.message){
-            divResultadoPaginaActual.textContent = data.message
+          if(data.prediction){
+            divResultadoPaginaActual.textContent = data.prediction ? "Suicida" : "No suicida";
           } else {
             divResultadoPaginaActual.textContent = data.error
           }
