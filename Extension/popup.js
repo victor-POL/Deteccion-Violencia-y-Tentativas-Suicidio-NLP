@@ -182,6 +182,7 @@ botonObtenerTextoPagina.addEventListener("click", async () => {
         } else if (textoPostReddit === "") {
           setearMensajeInfo(divResultaTextoPagina, "El post no tiene texto");
         } else {
+          textoPostReddit = textoPostReddit.trim()
           fetch(api_url + ruta_text_prediction, {
             method: "POST",
             headers: {
