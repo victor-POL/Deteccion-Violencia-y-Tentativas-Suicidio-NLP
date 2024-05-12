@@ -1,12 +1,16 @@
 const api_url = "http://127.0.0.1:5000/";
 const ruta_text_prediction = "text_prediction";
-const ruta_url_prediction = "url_predition";
+const ruta_url_prediction = "url_prediction";
 
 const botonObtenerPrediccion = document.getElementById(
   "boton-obtener-prediccion"
 );
 const botonObtenerPaginaActual = document.getElementById(
   "boton-obtener-pagina-actual"
+);
+
+const botonObtenerTextoPagina = document.getElementById(
+  "boton-obtener-texto-pagina"
 );
 
 /* -------------------------------------------------------------------------- */
@@ -33,7 +37,7 @@ function setearResultadoPrediccion(div, prediction) {
 
 function setearMensajeErrorAPI(div, error) {
   div.textContent = error;
-  div.className = "text-primary";
+  div.className = "text-info";
 }
 
 function setearMensajeErrorFetch(div, error) {
@@ -43,7 +47,7 @@ function setearMensajeErrorFetch(div, error) {
 
 function setearMensajeInfo(div, mensaje) {
   div.textContent = mensaje;
-  div.className = "text-info";
+  div.className = "text-primary";
 }
 
 function setearResultado(div, data) {
@@ -52,6 +56,21 @@ function setearResultado(div, data) {
   } else {
     setearMensajeErrorAPI(div, data.error);
   }
+}
+
+async function obtenerTextoPostReddit() {
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+
+  [{ result }] = await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: () =>
+      document.querySelector('[id*="-post-rtjson-conten"]').textContent,
+  });
+
+  return result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -131,6 +150,59 @@ botonObtenerPaginaActual.addEventListener("click", () => {
         .catch((error) => {
           setearMensajeErrorFetch(divResultadoPaginaActual, error.message);
         });
+    }
+  });
+});
+
+/* -------------------------------------------------------------------------- */
+/*                   Para leer la pagina actual directamente                  */
+/* -------------------------------------------------------------------------- */
+
+botonObtenerTextoPagina.addEventListener("click", async () => {
+  const divResultaTextoPagina = document.querySelector(
+    "#resultado-texto-pagina"
+  );
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const url = tabs[0].url;
+    if (!/https:\/\/www\.reddit\.com\/r\/SuicideWatch\/comments\//.test(url)) {
+      setearMensajeInfo(
+        divResultaTextoPagina,
+        "La pagina actual no es de un post de Reddit en r/SuicideWatch"
+      );
+    } else {
+      setearleSpinner(divResultaTextoPagina);
+
+      obtenerTextoPostReddit().then((textoPostReddit) => {
+        if (textoPostReddit === null || textoPostReddit === undefined) {
+          setearMensajeInfo(
+            divResultaTextoPagina,
+            "No se pudo obtener el texto del post"
+          );
+        } else if (textoPostReddit === "") {
+          setearMensajeInfo(divResultaTextoPagina, "El post no tiene texto");
+        } else {
+          fetch(api_url + ruta_text_prediction, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ texto: textoPostReddit }),
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              }
+              throw new Error("Error al enviar el texto de la pagina a la API");
+            })
+            .then((data) => {
+              setearResultado(divResultaTextoPagina, data);
+            })
+            .catch((error) => {
+              setearMensajeErrorFetch(divResultaTextoPagina, error.message);
+            });
+        }
+      });
     }
   });
 });
