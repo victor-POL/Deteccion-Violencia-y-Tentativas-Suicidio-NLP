@@ -82,20 +82,27 @@ botonObtenerPrediccion.addEventListener("click", () => {
     "#resultado-prediccion"
   );
 
-  const inputText = encodeURIComponent(
-    document.getElementById("texto-input").value
-  );
+  let inputText = document.getElementById("texto-input").value;
 
-  if (inputText === "") {
+  if (
+    inputText === "" ||
+    inputText === null ||
+    inputText === undefined ||
+    inputText.trim() === ""
+  ) {
     setearMensajeInfo(divResultadoPrediccion, "El campo de texto esta vacio");
     return;
   } else {
     setearleSpinner(divResultadoPrediccion);
 
-    fetch(api_url + ruta_text_prediction + "?text=" + inputText, {
+    inputText = inputText.trim();
+
+    fetch(api_url + ruta_text_prediction, {
+      method: "POST",
       headers: {
-        "ngrok-skip-browser-warning": "true",
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ texto: inputText }),
     })
       .then((response) => {
         if (response.ok) {
@@ -179,10 +186,10 @@ botonObtenerTextoPagina.addEventListener("click", async () => {
             divResultaTextoPagina,
             "No se pudo obtener el texto del post"
           );
-        } else if (textoPostReddit === "") {
+        } else if (textoPostReddit === "" || textoPostReddit.trim() === "") {
           setearMensajeInfo(divResultaTextoPagina, "El post no tiene texto");
         } else {
-          textoPostReddit = textoPostReddit.trim()
+          textoPostReddit = textoPostReddit.trim();
           fetch(api_url + ruta_text_prediction, {
             method: "POST",
             headers: {
