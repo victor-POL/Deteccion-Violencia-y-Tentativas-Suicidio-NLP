@@ -2,6 +2,7 @@
 #                              Requisitos Previos                              #
 # ---------------------------------------------------------------------------- #
 
+import platform
 import joblib
 import nltk
 nltk.download('stopwords')
@@ -11,9 +12,6 @@ nltk.download('wordnet')
 # from googletrans import Translator
 
 from flask import request, jsonify, Flask
-from pyngrok import ngrok, conf
-import getpass
-import threading
 
 # Funcion axuiliar para saber si estoy en el collab y usar su path o el del proyecto de github
 def is_running_on_colab():
@@ -94,7 +92,7 @@ nombre_modelo_prev_entrenado = Modelos.LOGISTIC_REGRESSION.value
 # usar formato '25k' para 25.000 filas ejemplo
 cant_prev_entrenada = '50k'
 
-path_base_modelo_generado = '/content/' if is_running_on_colab() else '.\\tentativa_suicidio\\entrenados\\'
+path_base_modelo_generado = '/content/' if is_running_on_colab() else ('./tentativa_suicidio/entrenados/' if platform.system() == 'Linux' else '.\\tentativa_suicidio\\entrenados\\')
 path_modelo_generado = path_base_modelo_generado + nombre_modelo_prev_entrenado + '_' + cant_prev_entrenada
 # --------------------------------------------------------
 
@@ -251,10 +249,5 @@ def procesar_url_post():
     else:
         return jsonify({"error": "No se proporcionó la URL en la solicitud"})
 
-if __name__ == '__main__':
-    app.run()
-
-
-# Llama a la función de inicio del servidor Flask
 if __name__ == '__main__':
     app.run()

@@ -7,3 +7,4 @@ selenium
 joblib
 nltk
 gunicorn
+Flask
