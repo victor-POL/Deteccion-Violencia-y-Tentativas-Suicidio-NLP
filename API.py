@@ -209,29 +209,50 @@ def test():
 
 
 @app.route('/text_prediction', methods=['GET'])
-def procesar_texto():
-    text_input = request.args.get('text')
-    if text_input:
-        prediction = get_tentativa_suicidio(text_input)
+def procesar_texto_get():
+    texto = request.args.get('text')
+    if texto:
+        print(f"Texto recibido: '{texto}'")
+        texto = texto.strip()
+        if(texto.isspace() or texto == ""):
+            return jsonify({"error": "No se pudo procesar el texto ya que esta vacío"})
+        prediction = get_tentativa_suicidio(texto)
+        print(f"Prediccion: '{prediction}'")
         return jsonify({"prediction": prediction})
     else:
-        return jsonify({"error": "No se proporció el texto en la solicitud"})
+        return jsonify({"error": "No se proporció un texto en la solicitud"})
     
-@app.route("/url_predition", methods=["POST"])
-def procesar_url():
+@app.route("/text_prediction", methods=["POST"])
+def procesar_texto_post():
+    data = request.json
+    texto = data.get("texto")
+    if texto:
+        print(f"Texto recibido: '{texto}'")
+        texto = texto.strip()
+        if(texto.isspace() or texto == ""):
+            return jsonify({"error": "No se pudo procesar el texto ya que esta vacío"})
+        prediction = get_tentativa_suicidio(texto)
+        print(f"Prediccion: '{prediction}'")
+        return jsonify({"prediction": prediction})
+    else:
+        return jsonify({"error": "No se proporcionó un texto en la solicitud"})
+    
+@app.route("/url_prediction", methods=["POST"])
+def procesar_url_post():
     data = request.json
     url = data.get("url")
     if url:
-        print("URL recibida: ", url)
+        print(f"URL Recibida: '{url}'")
         texto = get_texto(url)
-        print("Texto obtenido: ", texto)
+        print(f"Texto obtenido: '{texto}'")
         prediction = get_tentativa_suicidio(texto)
-        print("Predicción: ", prediction)
+        print(f"Prediccion: '{prediction}'")
         return jsonify({"prediction": prediction})
     else:
         return jsonify({"error": "No se proporcionó la URL en la solicitud"})
 
-# threading.Thread(target=app.run, kwargs={"use_reloader": False}).start()
+if __name__ == '__main__':
+    app.run()
 
 
 # Llama a la función de inicio del servidor Flask
