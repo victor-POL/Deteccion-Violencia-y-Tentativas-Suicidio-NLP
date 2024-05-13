@@ -1,0 +1,8 @@
+Flask-CORS
+neattext
+emoji
+scikit-learn==1.4.2 
+selenium
+
+joblib
+nltk
