@@ -30,8 +30,13 @@ function setearleSpinner(div) {
   div.innerHTML = obtenerCodigoSpinner();
 }
 
-function setearResultadoPrediccion(div, prediction) {
+function setearResultadoPrediccionSuicida(div, prediction) {
   div.textContent = prediction ? "Suicida" : "No suicida";
+  div.className = prediction ? "text-danger" : "text-success";
+}
+
+function setearResultadoPrediccionViolento(div, prediction) {
+  div.textContent = prediction ? "Violento" : "No violento";
   div.className = prediction ? "text-danger" : "text-success";
 }
 
@@ -50,14 +55,6 @@ function setearMensajeInfo(div, mensaje) {
   div.className = "text-primary";
 }
 
-function setearResultado(div, data) {
-  if (typeof data.prediction !== "undefined") {
-    setearResultadoPrediccion(div, data.prediction);
-  } else {
-    setearMensajeErrorAPI(div, data.error);
-  }
-}
-
 async function obtenerTextoPostReddit() {
   const [tab] = await chrome.tabs.query({
     active: true,
@@ -73,13 +70,21 @@ async function obtenerTextoPostReddit() {
   return result;
 }
 
+function esPostReddit(url) {
+  return /^https:\/\/www\.reddit\.com\/r\/[^\/]+\/comments\/[^\/]+/.test(url);
+}
+
 /* -------------------------------------------------------------------------- */
 /*                          Obtener predict por input                         */
 /* -------------------------------------------------------------------------- */
 
 botonObtenerPrediccion.addEventListener("click", () => {
-  const divResultadoPrediccion = document.querySelector(
-    "#resultado-prediccion"
+  const divResultadoPrediccionSuicida = document.querySelector(
+    "#resultado-prediccion-suicida"
+  );
+
+  const divResultadoPrediccionViolento = document.querySelector(
+    "#resultado-prediccion-violento"
   );
 
   let inputText = document.getElementById("texto-input").value;
@@ -90,10 +95,13 @@ botonObtenerPrediccion.addEventListener("click", () => {
     inputText === undefined ||
     inputText.trim() === ""
   ) {
-    setearMensajeInfo(divResultadoPrediccion, "El campo de texto esta vacio");
+    setearMensajeInfo(
+      divResultadoPrediccionSuicida,
+      "El campo de texto esta vacio"
+    );
     return;
   } else {
-    setearleSpinner(divResultadoPrediccion);
+    setearleSpinner(divResultadoPrediccionSuicida);
 
     inputText = inputText.trim();
 
@@ -111,10 +119,24 @@ botonObtenerPrediccion.addEventListener("click", () => {
         throw new Error("Error al enviar el texto a la API");
       })
       .then((data) => {
-        setearResultado(divResultadoPrediccion, data);
+        if (
+          data.prediction_suicidio === undefined ||
+          data.prediction_violencia === undefined
+        ) {
+          setearMensajeErrorAPI(divResultadoPrediccionSuicida, data.error);
+          return;
+        }
+        setearResultadoPrediccionSuicida(
+          divResultadoPrediccionSuicida,
+          data.prediction_suicidio
+        );
+        setearResultadoPrediccionViolento(
+          divResultadoPrediccionViolento,
+          data.prediction_violencia
+        );
       })
       .catch((error) => {
-        setearMensajeErrorFetch(divResultadoPrediccion, error.message);
+        setearMensajeErrorFetch(divResultadoPrediccionSuicida, error.message);
       });
   }
 });
@@ -124,19 +146,23 @@ botonObtenerPrediccion.addEventListener("click", () => {
 /* -------------------------------------------------------------------------- */
 
 botonObtenerPaginaActual.addEventListener("click", () => {
-  const divResultadoPaginaActual = document.querySelector(
-    "#resultado-pagina-actual"
+  const divResultadoPaginaActualSuicida = document.querySelector(
+    "#resultado-pagina-actual-suicida"
+  );
+
+  const divResultadoPaginaActualViolento = document.querySelector(
+    "#resultado-pagina-actual-violento"
   );
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const url = tabs[0].url;
-    if (!/https:\/\/www\.reddit\.com\/r\/SuicideWatch\/comments\//.test(url)) {
+    if (!esPostReddit(url)) {
       setearMensajeInfo(
-        divResultadoPaginaActual,
+        divResultadoPaginaActualSuicida,
         "La pagina actual no es de un post de Reddit en r/SuicideWatch"
       );
     } else {
-      setearleSpinner(divResultadoPaginaActual);
+      setearleSpinner(divResultadoPaginaActualSuicida);
 
       fetch(api_url + ruta_url_prediction, {
         method: "POST",
@@ -152,10 +178,24 @@ botonObtenerPaginaActual.addEventListener("click", () => {
           throw new Error("Error al enviar la URL a la API");
         })
         .then((data) => {
-          setearResultado(divResultadoPaginaActual, data);
+          if (
+            data.prediction_suicidio === undefined ||
+            data.prediction_violencia === undefined
+          ) {
+            setearMensajeErrorAPI(divResultadoPaginaActualSuicida, data.error);
+            return;
+          }
+          setearResultadoPrediccionSuicida(
+            divResultadoPaginaActualSuicida,
+            data.prediction_suicidio
+          );
+          setearResultadoPrediccionViolento(
+            divResultadoPaginaActualViolento,
+            data.prediction_violencia
+          );
         })
         .catch((error) => {
-          setearMensajeErrorFetch(divResultadoPaginaActual, error.message);
+          setearMensajeErrorFetch(divResultadoPaginaActualSuicida, error.message);
         });
     }
   });
@@ -166,28 +206,32 @@ botonObtenerPaginaActual.addEventListener("click", () => {
 /* -------------------------------------------------------------------------- */
 
 botonObtenerTextoPagina.addEventListener("click", async () => {
-  const divResultaTextoPagina = document.querySelector(
-    "#resultado-texto-pagina"
+  const divResultaTextoPaginaSuicida = document.querySelector(
+    "#resultado-texto-pagina-suicida"
+  );
+
+  const divResultaTextoPaginaViolento = document.querySelector(
+    "#resultado-texto-pagina-violento"
   );
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const url = tabs[0].url;
-    if (!/https:\/\/www\.reddit\.com\/r\/SuicideWatch\/comments\//.test(url)) {
+    if (!esPostReddit(url)) {
       setearMensajeInfo(
-        divResultaTextoPagina,
+        divResultaTextoPaginaSuicida,
         "La pagina actual no es de un post de Reddit en r/SuicideWatch"
       );
     } else {
-      setearleSpinner(divResultaTextoPagina);
+      setearleSpinner(divResultaTextoPaginaSuicida);
 
       obtenerTextoPostReddit().then((textoPostReddit) => {
         if (textoPostReddit === null || textoPostReddit === undefined) {
           setearMensajeInfo(
-            divResultaTextoPagina,
+            divResultaTextoPaginaSuicida,
             "No se pudo obtener el texto del post"
           );
         } else if (textoPostReddit === "" || textoPostReddit.trim() === "") {
-          setearMensajeInfo(divResultaTextoPagina, "El post no tiene texto");
+          setearMensajeInfo(divResultaTextoPaginaSuicida, "El post no tiene texto");
         } else {
           textoPostReddit = textoPostReddit.trim();
           fetch(api_url + ruta_text_prediction, {
@@ -204,13 +248,36 @@ botonObtenerTextoPagina.addEventListener("click", async () => {
               throw new Error("Error al enviar el texto de la pagina a la API");
             })
             .then((data) => {
-              setearResultado(divResultaTextoPagina, data);
+              if (
+                data.prediction_suicidio === undefined ||
+                data.prediction_violencia === undefined
+              ) {
+                setearMensajeErrorAPI(divResultadoPaginaActualSuicida, data.error);
+                return;
+              }
+              setearResultadoPrediccionSuicida(
+                divResultaTextoPaginaSuicida,
+                data.prediction_suicidio
+              );
+              setearResultadoPrediccionViolento(
+                divResultaTextoPaginaViolento,
+                data.prediction_violencia
+              );
             })
             .catch((error) => {
-              setearMensajeErrorFetch(divResultaTextoPagina, error.message);
+              setearMensajeErrorFetch(divResultaTextoPaginaSuicida, error.message);
             });
         }
       });
     }
   });
 });
+
+document
+  .getElementById("texto-input")
+  .addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("boton-obtener-prediccion").click();
+    }
+  });
