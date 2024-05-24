@@ -1,0 +1,35 @@
+## Palabras mas comunes contando solamente palabra por palabra
+100%|██████████| 50000/50000 [00:05<00:00, 8357.44it/s]
+30183
+[('the', 28948), ('a', 23493), ('to', 21956), ('i', 20260), ('is', 19004), ('and', 17549), ('you', 16087), ('of', 14264), ('are', 13662), ('not', 11283), ('in', 10711), ('that', 10520), ('it', 10132), ('for', 7248), ('with', 7009), ('this', 6501), ('they', 6327), ('what', 6230), ('do', 6125), ('be', 6097), ('have', 5839), ('on', 5449), ('my', 5153), ('all', 5013), ('so', 4657)]
+
+## Palabras mas comunes contando palabra por palabra con tokenizador
+100%|██████████| 50000/50000 [00:03<00:00, 13417.47it/s]
+30180
+[('the', 28948), ('a', 23493), ('to', 21956), ('i', 20260), ('is', 19004), ('and', 17549), ('you', 16087), ('of', 14264), ('are', 13662), ('not', 12309), ('in', 10711), ('that', 10520), ('it', 10132), ('for', 7248), ('with', 7009), ('this', 6501), ('they', 6327), ('what', 6230), ('do', 6125), ('be', 6097), ('have', 5839), ('on', 5449), ('my', 5153), ('all', 5013), ('so', 4657)]
+
+## Palabras mas comunes contando teniendo en cuenta lo anterior + stopwords + lowercase
+100%|██████████| 50000/50000 [00:04<00:00, 11442.76it/s]
+30031
+[('people', 4638), ('like', 4518), ('slut', 3406), ('whatever', 3333), ('bitch', 2933), ('face', 2782), ('get', 2489), ('would', 2471), ('fucking', 2445), ('one', 2164), ('think', 2055), ('black', 1957), ('white', 1875), ('want', 1862), ('know', 1859), ('women', 1780), ('love', 1710), ('country', 1580), ('go', 1560), ('fuck', 1524), ('good', 1468), ('us', 1448), ('see', 1365), ('time', 1293), ('shit', 1245)]
+
+## Palabras mas comunes contando teniendo en cuenta lo anterior + signos de puctuacion
+100%|██████████| 50000/50000 [00:03<00:00, 13277.96it/s]
+30031
+[('people', 4638), ('like', 4518), ('slut', 3406), ('whatever', 3333), ('bitch', 2933), ('face', 2782), ('get', 2489), ('would', 2471), ('fucking', 2445), ('one', 2164), ('think', 2055), ('black', 1957), ('white', 1875), ('want', 1862), ('know', 1859), ('women', 1780), ('love', 1710), ('country', 1580), ('go', 1560), ('fuck', 1524), ('good', 1468), ('us', 1448), ('see', 1365), ('time', 1293), ('shit', 1245)]
+
+## Palabras mas comunes contando teniendo en cuenta lo anterior + aplicando Stemming
+100%|██████████| 50000/50000 [00:08<00:00, 5663.13it/s]
+20684
+[('like', 4813), ('peopl', 4659), ('fuck', 4157), ('bitch', 3877), ('get', 3445), ('slut', 3437), ('whatev', 3333), ('face', 2866), ('go', 2750), ('think', 2630), ('would', 2471), ('want', 2372), ('black', 2339), ('one', 2320), ('white', 2279), ('know', 2093), ('say', 2015), ('love', 1989), ('countri', 1982), ('make', 1895), ('women', 1790), ('look', 1678), ('time', 1648), ('need', 1605), ('call', 1599)]
+
+## Palabras mas comunes contando teniendo en cuenta lo anterior + aplicando Lemmatization
+100%|██████████| 50000/50000 [00:38<00:00, 1308.53it/s]
+24524
+[('like', 4676), ('people', 4659), ('get', 4638), ('bitch', 3869), ('go', 3449), ('slut', 3436), ('whatever', 3333), ('fuck', 3324), ('face', 2863), ('think', 2839), ('say', 2829), ('woman', 2541), ('would', 2471), ('want', 2369), ('make', 2337), ('black', 2337), ('one', 2320), ('know', 2312), ('white', 2278), ('country', 1982), ('see', 1900), ('good', 1890), ('love', 1862), ('look', 1677), ('time', 1642)]
+
+# Palabras mas comunes segun nuestra funcion analizadora
+100%|██████████| 50000/50000 [00:31<00:00, 1590.34it/s]
+24565
+[('like', 4667), ('people', 4659), ('bitch', 3871), ('fuck', 3787), ('slut', 3434), ('face', 2865), ('think', 2856), ('woman', 2541), ('want', 2359), ('black', 2337), ('know', 2281), ('white', 2278), ('get', 2136), ('country', 1981), ('go', 1889), ('love', 1864), ('look', 1669), ('time', 1645), ('good', 1634), ('need', 1597), ('say', 1595), ('come', 1512), ('liberal', 1464), ('gun', 1411), ('right', 1385)]
+
